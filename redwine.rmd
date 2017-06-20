@@ -13,8 +13,8 @@ Each wine is rated by at least 3 wine experts, providing a rating between
 > **Overview of the wine dataset**
 
 
-```{r echo=FALSE, message=FALSE, warning=FALSE, packages}
-
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(echo=FALSE, warning=FALSE, message=FALSE)
 
 # install.packages("..."") if necessary 
 
@@ -35,18 +35,16 @@ and quality ratings of wines.
 ```{r echo=FALSE, Load_the_Data}
 # Load the Data
 red = read.csv("wineQualityReds.csv",header = T)
+red$X <- NULL
 str(red)
 
-#factorize quality variable and use it as a parameterize the color 
-#in the plotting
-red$quality_factor = factor(red$quality)
 
 ```
 
 > Summary of statistics of each variables
 
 ```{r,echo=FALSE}
-summary(red[2:13])
+summary(red)
 ```
 
 
@@ -256,7 +254,7 @@ Red color dots shows negative correlation and blue are positive correlation.
 The darkness and the size of the dots shows how strong is the correlation. 
 
 ```{r,echo=FALSE}
-corMatrix =cor(red[2:13],method='pearson')
+corMatrix =cor(red,method='pearson')
 corrplot(corMatrix, type="lower")
 ```
 
@@ -274,13 +272,17 @@ related to it.
 
 ```{r echo=FALSE, Bivariate_Plots_1}
 
+#factorize quality variable and use it as a parameterize the color 
+#in the plotting
+red$quality_factor = factor(red$quality)
+
 p_alcohol_quality = ggplot(red, 
        aes(y=alcohol,x=quality,color=quality_factor))+
   geom_jitter()+
   geom_boxplot(aes(group=(cut_width(quality,1))),alpha = 0.5)+
   ylab("Alcohol levels in red wine[%]")+
   coord_flip()+
-  scale_color_brewer(type = 'div',palette = 4) +
+  scale_color_brewer(type = 'div',palette = 4,guide = FALSE) +
   theme_update(plot.title = element_text(hjust = 0.5))+
   ggtitle("Alcohol levels in red wines VS. quality")
   
@@ -299,9 +301,9 @@ ggplot(red,
        aes(y=volatile.acidity,x=quality,color=quality_factor))+
   geom_jitter()+
   geom_boxplot(aes(group=(cut_width(quality,1))),alpha = 0.5)+
-  ylab("Volatile acidity level in red wine[%]")+
+  ylab("Volatile acidity level in red wine[g/dm^3]")+
   coord_flip()+
-  scale_color_brewer(type = 'div',palette = 4) +
+  scale_color_brewer(type = 'div',palette = 4,guide = FALSE) +
   ggtitle("Volatile acidity level in red wines VS. quality")
 
 ```
@@ -323,8 +325,8 @@ ggplot(red,
   geom_jitter()+
   geom_boxplot(aes(group=(cut_width(quality,1))),alpha = 0.5)+
   coord_flip()+
-  ylab("Citric acid level in red wine[%]")+
-  scale_color_brewer(type = 'div',palette = 4) +
+  ylab("Citric acid level in red wine[g/dm^3]")+
+  scale_color_brewer(type = 'div',palette = 4,guide = FALSE) +
   ggtitle("Citric acid level in red wines VS. quality")
 
 ```
@@ -344,7 +346,7 @@ ggplot(red,
   geom_smooth(method = "lm", se = FALSE,size=1)+
   scale_color_brewer(type = 'div',palette = 4) +
   xlab("Alcohol level in red wine[%]")+
-  ylab("Volatile acidity level in red wine[%]")+
+  ylab("Volatile acidity level in red wine[g/dm^3]")+
   ggtitle("Alcohol and volatile acidity level in red wines VS. quality")
 ```
 
@@ -364,8 +366,8 @@ q_multi_3= ggplot(red,
   xlim(c(0,0.8))+
   geom_smooth(method = "lm", se = FALSE,size=1)+
   scale_color_brewer(type = 'div',palette = 4) +
-  xlab("Citric acid level in red wine[%]")+
-  ylab("Volatile acidity level in red wine[%]")+
+  xlab("Citric acid level in red wine[g/dm^3]")+
+  ylab("Volatile acidity level in red wine[g/dm^3]")+
   ggtitle("citric acidity and volatile acidity level in red wines VS. quality")
 
 q_multi_3
